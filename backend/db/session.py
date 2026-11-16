@@ -1,0 +1,9 @@
+from sqlmodel import create_engine, Session
+from core.config import DATABASE_URL
+
+engine = create_engine(DATABASE_URL)
+# print(f" here is the engine: {engine}")
+
+def get_session():
+    with Session(engine) as session:
+        yield session
