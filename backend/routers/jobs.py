@@ -37,3 +37,12 @@ def singular_job(job_id: int, session: Session = Depends(get_session)):
             if not job:
                 raise HTTPException(status_code=404, detail="Job not found")
             return job
+
+@router.delete("/{job_id}")
+def delete_job(job_id: int, session: Session = Depends(get_session)):
+    job = session.get(Job, job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    session.delete(job)
+    session.commit()
+    return {"message": f"Job deleted successfully: {job_id} | {job.title}" }
