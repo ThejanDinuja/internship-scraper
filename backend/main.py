@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from sqlmodel import create_engine
+from sqlmodel import SQLModel, create_engine
+from db.session import engine
+from models.jobs import job
 
 app = FastAPI()
 engine = create_engine("postgresql+psycopg://postgres:dev@localhost:5432/postgres")
@@ -12,3 +14,4 @@ def health():
 def hello():
     return {"message": "Hello, Thejan!"}
 
+SQLModel.metadata.create_all(engine)

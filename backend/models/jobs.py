@@ -4,9 +4,7 @@ class job(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str
     company: str
-    url: str
-    date_applied: str
-    status: str
+    url: str = Field(unique=True)
 
     def getTitle(self):
         return self.title
