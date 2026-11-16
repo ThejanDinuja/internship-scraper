@@ -1,10 +1,15 @@
 from sqlmodel import SQLModel, Field
 
-class job(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+
+class JobBase(SQLModel):
     title: str
     company: str
     url: str = Field(unique=True)
+
+
+class Job(JobBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+
 
     def getTitle(self):
         return self.title
@@ -14,9 +19,3 @@ class job(SQLModel, table=True):
 
     def getUrl(self):
         return self.url
-
-    def getDateApplied(self):
-        return self.date_applied
-
-    def getStatus(self):
-        return self.status
