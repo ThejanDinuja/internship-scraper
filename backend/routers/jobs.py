@@ -8,6 +8,10 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 @router.post("/", response_model=JobRead)
 def create_job(job: JobCreate, session: Session = Depends(get_session)):
+    checker = select(Job).where(Job.url == job.url)
+    existing_job = session.exec(checker).first()
+    if existing_job:
+        raise HTTPException(status_code=409, detail="Job with this URL already exists")
     new_job = Job.model_validate(job)
     session.add(new_job)
     session.commit()
@@ -20,6 +24,7 @@ def read_jobs(session: Session = Depends(get_session)):
     select_jobs_result = session.exec(select_jobs)
     return select_jobs_result.all()
 
+## doesn't matter cause fastapi makes sure id is an int and gives an error
 @router.get("/{job_id}", response_model=JobRead)
 def singular_job(job_id: int, session: Session = Depends(get_session)):
     flag = False
