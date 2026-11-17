@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, create_engine
 from db.session import engine
 from models.jobs import Job
 from routers.jobs import router
+from models.applications import Application
 
 app = FastAPI()
 app.include_router(router)
