@@ -1,6 +1,6 @@
 import enum 
 from sqlmodel import SQLModel, Field
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Status(str, enum.Enum):
     applied = "applied"
