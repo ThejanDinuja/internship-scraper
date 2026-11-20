@@ -49,3 +49,12 @@ def update_application(application_id: int, update_data: ApplicationUpdate, sess
     session.commit()
     session.refresh(db_application)
     return db_application
+
+@router.delete("/{application_id}")
+def delete_application(application_id: int, session: Session = Depends(get_session)):
+    application = session.get(Application, application_id)
+    if application is None:
+        raise HTTPException(status_code=404, detail="Application not found")
+    session.delete(application)
+    session.commit()
+    return {"detail": "Application deleted successfully"}
