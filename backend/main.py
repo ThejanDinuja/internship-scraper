@@ -5,6 +5,7 @@ from models.jobs import Job
 from routers.jobs import router as job_router
 from models.applications import Application
 from routers.application import router as application_router
+from models.user import User
 
 
 app = FastAPI()
