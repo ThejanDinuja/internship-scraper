@@ -1,8 +1,6 @@
 import enum 
 from sqlmodel import SQLModel, Field
 from datetime import datetime, timezone
-from models.user import User
-from core.security import get_current_user
 
 class Status(str, enum.Enum):
     applied = "applied"
