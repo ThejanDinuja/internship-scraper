@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from db.session import get_session
 from models.jobs import Job
 from schema.job import JobCreate, JobRead
+from models.user import User
+from core.security import get_current_user
+from models.applications import Application
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 @router.post("/", response_model=JobRead)
-def create_job(job: JobCreate, session: Session = Depends(get_session)):
+def create_job(job: JobCreate, session: Session = Depends(get_session), user: User = Depends(get_current_user)):
     checker = select(Job).where(Job.url == job.url)
     existing_job = session.exec(checker).first()
     if existing_job:
@@ -39,10 +42,19 @@ def singular_job(job_id: int, session: Session = Depends(get_session)):
             return job
 
 @router.delete("/{job_id}")
-def delete_job(job_id: int, session: Session = Depends(get_session)):
+def delete_job(job_id: int, session: Session = Depends(get_session), user: User = Depends(get_current_user)):
     job = session.get(Job, job_id)
+
     if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+            raise HTTPException(status_code=404, detail="Job not found")
+    
+    query = select(Application).where(Application.job_id == job_id)
+    checker = session.exec(query).first()
+
+    if checker:
+        raise HTTPException(status_code=409, detail="Cannot delete job with existing application")
+
+    job_title = job.title
     session.delete(job)
     session.commit()
-    return {"message": f"Job deleted successfully: {job_id} | {job.title}" }
+    return {"message": f"Job deleted successfully: {job_id} | {job_title}" }

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
+from sqlalchemy.exc import IntegrityError
 
 from db.session import get_session
 from models.jobs import Job
@@ -61,7 +62,13 @@ def create_application(
         raise HTTPException(status_code=404, detail="Job not found")
 
     new_application = Application.model_validate(application, update={"user_id": user.id})
+    
     session.add(new_application)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=409, detail="You have already applied to this job")
+    
     session.refresh(new_application)
     return new_application

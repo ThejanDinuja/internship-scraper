@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from sqlmodel import SQLModel, create_engine
+from sqlmodel import SQLModel
 from db.session import engine
 from models.jobs import Job
 from routers.jobs import router as job_router
@@ -13,7 +13,6 @@ app = FastAPI()
 app.include_router(job_router)
 app.include_router(application_router)
 app.include_router(auth_router)
-engine = create_engine("postgresql+psycopg://postgres:dev@localhost:5432/postgres")
 
 @app.get("/")
 def health():

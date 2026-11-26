@@ -1,8 +1,6 @@
 import enum 
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, UniqueConstraint
 from datetime import datetime, timezone
-from models.user import User
-from core.security import get_current_user
 
 class Status(str, enum.Enum):
     applied = "applied"
@@ -20,5 +18,7 @@ class ApplicationBase(SQLModel):
 
 
 class Application(ApplicationBase, table=True):
+    __table_args__ = (UniqueConstraint("user_id", "job_id", name="uq_user_job"), )
+
     id: int | None = Field(default=None, primary_key=True) 
     user_id: int = Field(foreign_key="users.id")
