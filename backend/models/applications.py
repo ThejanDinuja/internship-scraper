@@ -1,5 +1,5 @@
 import enum 
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, UniqueConstraint
 from datetime import datetime, timezone
 
 class Status(str, enum.Enum):
@@ -18,5 +18,7 @@ class ApplicationBase(SQLModel):
 
 
 class Application(ApplicationBase, table=True):
+    __table_args__ = (UniqueConstraint("user_id", "job_id", name="uq_user_job"), )
+
     id: int | None = Field(default=None, primary_key=True) 
     user_id: int = Field(foreign_key="users.id")
